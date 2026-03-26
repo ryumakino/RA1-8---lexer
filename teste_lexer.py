@@ -1,55 +1,76 @@
 from lexer import parseExpressao
 
-CASOS_VALIDOS = [
-    "(3.14 2.0 +)",
-    "(5 RES)",
-    "(1.0 2.0 *)",
-    "((3.0 4.0 +) 2.0 /)",
-    "(10 3 //)",
-    "(10 3 %)",
-    "(2 3 ^)",
-    "(4.5 2.0 -)",
-    "(-3.5 2 +)",
-    "(0.5 1.5 +)",
-    "(100 200 +)",
-    "(1 2 +)",
-    "((1 2 +) (3 4 +) *)",
-    "(10 -2 +)",
-    "((-3 4 +) 2 *)",
-    "(10 5 /)",
-    "(8 2 //)",
-    "(2 3 4 +)"  # depende do enunciado (pode aceitar como tokens)
-]
 
-CASOS_INVALIDOS = [
-    "(3.14.5 2.0 +)",   # múltiplos pontos
-    "(3,45 2.0 +)",     # vírgula inválida
-    "(3.14 2.0 &)",     # caractere inválido
-    "(3.14 @ 2.0 +)",   # caractere inválido
-    "(var 2.0 +)",      # palavra inválida
-    "(10 2 ///)",       # operador inválido
-    "(.5 2 +)",         # decimal inválido
-    "(3. 2 +)",         # decimal inválido
-    "(- 3.5 2 +)",      # negativo mal formado
-    # letras minúsculas
-    "(res 2 +)",
-    "(Mem 2 +)",
-]
+def testar_entradas_validas():
+    print("Testando entradas válidas:\n")
 
-def avaliar_casos(casos):
-    for caso in casos:
+    # lista de expressões validas da linguagem
+    testes = [
+        "(3.14 2.0 +)",
+        "(5 RES)",
+        "(10.5 CONTADOR)",
+        "(1.0 2.0 *)",
+        "((3.0 4.0 +) 2.0 /)",
+        "(10 3 //)",
+        "(10 3 %)",
+        "(2 3 ^)",
+        "(4.5 2.0 -)",
+        "(VARIAVEL 5 +)",
+        "(-3.5 2 +)" 
+    ]
+
+    aprovados = 0
+
+    # percorre todos os testes validos
+    for teste in testes:
         try:
-            tokens = parseExpressao(caso)
-            print(f"{caso} -> {tokens}")
-        except Exception as e:
-            print(f"{caso} -> ERRO: {e}")
+            tokens = parseExpressao(teste)
 
-def testar_lexer():
-    print("=== TESTES VÁLIDOS ===")
-    avaliar_casos(CASOS_VALIDOS)
-    print("\n" + "-" * 40)
-    print("=== TESTES INVÁLIDOS ===")
-    avaliar_casos(CASOS_INVALIDOS)
+            print(f"✓ '{teste}' -> {tokens}")
+            aprovados += 1
+
+        except Exception as e:
+
+            print(f"✗ '{teste}' -> Erro inesperado: {e}")
+
+    print(f"\n{aprovados}/{len(testes)} testes válidos passaram.\n")
+
+
+
+# Esta função testa expressões que devem gerar erro
+def testar_entradas_invalidas():
+    print("Testando entradas inválidas:\n")
+
+    # lista de expressões invalidas
+    testes = [
+        "(3.14.5 2.0 +)",   
+        "(3,45 2.0 +)",    
+        "(3.14 2.0 &)",     
+        "(3.14 2.0 +",     
+        ")3.14 2.0 +(",    
+        "(3.14 @ 2.0 +)",   
+        "(var 2.0 +)",    
+    ]
+
+    aprovados = 0
+
+    # percorre todos os testes invalidos
+    for teste in testes:
+        try:
+            tokens = parseExpressao(teste)
+
+            print(f"✗ '{teste}' -> {tokens} (deveria falhar)")
+
+        except Exception as e:
+            print(f"✓ '{teste}' -> Erro esperado: {e}")
+            aprovados += 1
+
+    print(f"\n{aprovados}/{len(testes)} testes inválidos detectados.\n")
+
 
 if __name__ == "__main__":
-    testar_lexer()
+    testar_entradas_validas()
+
+    print("-" * 40 + "\n")
+
+    testar_entradas_invalidas()
